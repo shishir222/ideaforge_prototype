@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Voice - Butwal Multiple Campus</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React 18 & ReactDOM 18 -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bmc: {
+                            50: '#f0f4f9',
+                            100: '#dbe4f0',
+                            600: '#1e3a8a',
+                            700: '#1d3557',
+                            800: '#0f224a',
+                            900: '#0a1735',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // SVG Icons
+        const IconShieldCheck = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+        );
+
+        const IconLock = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        );
+
+        const IconUser = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        );
+
+        const IconCheckCircle = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const IconArrowRight = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+        );
+
+        const IconBuilding = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 v5m-4 0h4" />
+            </svg>
+        );
+
+        const IconPlus = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+        );
+
+        const IconSend = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+        );
+
+        const IconSwitch = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+        );
+
+        const IconReset = ({ className = "w-4 h-4" }) => (
+            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        );
+
+        const getInitialReports = () => [
+            {
+                id: 'CSIT-1020',
+                title: 'Sanitary facility concern',
+                faculty: 'Science & Technology',
+                department: 'CSIT',
+                category: 'Facilities',
+                location: 'Campus Facility Block',
+                description: "The sanitary facilities in the college need better maintenance and regular availability of basic supplies. Some students feel uncomfortable raising this issue directly, so I'm requesting the department to look into this matter.",
+                visibility: 'Anonymous',
+                reporterName: 'Anonymous',
+                reporterEmail: null,
+                reporterDept: 'CSIT',
+                status: 'Submitted',
+                createdAt: 'Today, 09:15 AM',
+                response: null,
+                responseDate: null,
+                isMine: false
+            },
+            {
+                id: 'CSIT-1021',
+                title: 'Unpleasant smell near washroom',
+                faculty: 'Science & Technology',
+                department: 'CSIT',
+                category: 'Facilities',
+                location: 'Washroom Area',
+                description: "There is a strong unpleasant smell around the washroom area, especially during the afternoon. Please look into the cleanliness and ventilation.",
+                visibility: 'Identified',
+                reporterName: 'Aayush Karki',
+                reporterEmail: null,
+                reporterDept: 'CSIT',
+                status: 'Submitted',
+                createdAt: 'Today, 10:30 AM',
+                response: null,
+                responseDate: null,
+                isMine: false
+            },
+            {
+                id: 'CSIT-1022',
+                title: 'Class schedule concern',
+                faculty: 'Science & Technology',
+                department: 'CSIT',
+                category: 'Academic / Teaching',
+                location: 'CSIT Block',
+                description: "There have been instances where scheduled classes have started late because the assigned instructor was unavailable. Please look into the scheduling and communication process.",
+                visibility: 'Anonymous',
+                reporterName: 'Anonymous',
+                reporterEmail: null,
+                reporterDept: 'CSIT',
+                status: 'Submitted',
+                createdAt: 'Yesterday, 02:15 PM',
+                response: null,
+                responseDate: null,
+                isMine: false
+            },
+            {
+                id: 'CSIT-1023',
+                title: 'Projector not working in Room 204',
+                faculty: 'Science & Technology',
+                department: 'CSIT',
+                category: 'Classroom Environment',
+                location: 'Room 204',
+                description: "The projector in Room 204 has not been working properly, making it difficult to follow presentations and course materials.",
+                visibility: 'Identified',
+                reporterName: 'Sujal Thapa',
+                reporterEmail: null,
+                reporterDept: 'CSIT',
+                status: 'Acknowledged',
+                createdAt: 'Yesterday, 11:00 AM',
+                response: 'The department has acknowledged the issue and IT support will inspect the projector.',
+                responseDate: 'Yesterday, 03:30 PM',
+                isMine: false
+            }
+        ];
+
+        const getInitialSuggestions = () => [
+            {
+                id: 'SUG-195',
+                title: 'Extend Central Library Hours During Exams',
+                description: 'Requesting library opening hours to be extended until 7:00 PM during mid-term and final examinations.',
+                faculty: 'General Campus',
+                department: 'Library',
+                supportersCount: 14,
+                isSupportedByMe: false,
+                status: 'Planned',
+                author: 'Verified Student',
+                visibility: 'Public',
+                response: 'Library administration agreed to extend hours starting next week.',
+                responseDate: '1 day ago',
+                createdAt: '5 days ago',
+                isMine: false
+            }
+        ];
+
+        function App() {
+            const [currentRole, setCurrentRole] = useState('student');
+            const [studentTab, setStudentTab] = useState('dashboard');
+            const [deptTab, setDeptTab] = useState('dashboard');
+
+            const [reports, setReports] = useState(getInitialReports);
+            const [suggestions, setSuggestions] = useState(getInitialSuggestions);
+            const [selectedReportId, setSelectedReportId] = useState('CSIT-1020');
+            const [selectedSuggestionId, setSelectedSuggestionId] = useState('SUG-195');
+
+            const [feedbackMsg, setFeedbackMsg] = useState(null);
+
+            // Pre-filled concern form ready for live input
+            const [reportForm, setReportForm] = useState({
+                title: 'Difficulty focusing during class',
+                faculty: 'Science & Technology',
+                department: 'CSIT',
+                category: 'Classroom Environment',
+                location: 'CSIT Lecture Hall',
+                description: "I'm unable to focus on class because some classmates are making too much noise during study. I'd like the department to look into this matter.",
+                visibility: 'Anonymous'
+            });
+
+            // Pre-filled suggestion form ready for live input
+            const [suggestionForm, setSuggestionForm] = useState({
+                title: 'IoT & Robotics Workshop',
+                description: 'Organize a practical IoT and robotics workshop so students can gain hands-on experience with embedded systems, sensors, and robotics.',
+                visibility: 'Public'
+            });
+
+            const [deptReplyText, setDeptReplyText] = useState('The department has reviewed the concern and will take appropriate measures to maintain a respectful and productive classroom environment.');
+            const [deptSuggReplyText, setDeptSuggReplyText] = useState('The CSIT department has evaluated the suggestion and agreed to schedule an IoT hands-on workshop next month in coordination with the IT club.');
+
+            const showToast = (msg) => {
+                setFeedbackMsg(msg);
+                setTimeout(() => setFeedbackMsg(null), 3500);
+            };
+
+            const handleResetDemo = () => {
+                setReports(getInitialReports());
+                setSuggestions(getInitialSuggestions());
+                setSelectedReportId('CSIT-1020');
+                setSelectedSuggestionId('SUG-195');
+                setReportForm({
+                    title: 'Difficulty focusing during class',
+                    faculty: 'Science & Technology',
+                    department: 'CSIT',
+                    category: 'Classroom Environment',
+                    location: 'CSIT Lecture Hall',
+                    description: "I'm unable to focus on class because some classmates are making too much noise during study. I'd like the department to look into this matter.",
+                    visibility: 'Anonymous'
+                });
+                setSuggestionForm({
+                    title: 'IoT & Robotics Workshop',
+                    description: 'Organize a practical IoT and robotics workshop so students can gain hands-on experience with embedded systems, sensors, and robotics.',
+                    visibility: 'Public'
+                });
+                setDeptReplyText('The department has reviewed the concern and will take appropriate measures to maintain a respectful and productive classroom environment.');
+                setDeptSuggReplyText('The CSIT department has evaluated the suggestion and agreed to schedule an IoT hands-on workshop next month in coordination with the IT club.');
+                showToast("Demo state reset to original defaults.");
+            };
+
+            const handleSubmitReport = (e) => {
+                e.preventDefault();
+                const targetId = 'CSIT-1042';
+
+                const newReportObj = {
+                    id: targetId,
+                    title: reportForm.title || 'Difficulty focusing during class',
+                    faculty: reportForm.faculty || 'Science & Technology',
+                    department: reportForm.department || 'CSIT',
+                    category: reportForm.category || 'Classroom Environment',
+                    location: reportForm.location || 'CSIT Lecture Hall',
+                    description: reportForm.description,
+                    visibility: reportForm.visibility,
+                    reporterName: reportForm.visibility === 'Anonymous' ? 'Anonymous' : 'Shyam Chaudhary',
+                    reporterEmail: reportForm.visibility === 'Anonymous' ? null : 'shyam.chaudhary@bmc.edu.np',
+                    reporterDept: 'CSIT',
+                    status: 'Submitted',
+                    createdAt: 'Just now',
+                    response: null,
+                    responseDate: null,
+                    isMine: true
+                };
+
+                setReports([newReportObj, ...reports]);
+                setSelectedReportId(targetId);
+                setStudentTab('report-submitted');
+                showToast("Concern submitted successfully.");
+            };
+
+            const handlePublishSuggestion = (e) => {
+                e.preventDefault();
+                if (!suggestionForm.title.trim() || !suggestionForm.description.trim()) return;
+
+                const targetId = 'SUG-198';
+                const newSuggestion = {
+                    id: targetId,
+                    title: suggestionForm.title.trim(),
+                    description: suggestionForm.description.trim(),
+                    faculty: 'Science & Technology',
+                    department: 'CSIT',
+                    supportersCount: 0,
+                    isSupportedByMe: false,
+                    status: 'Under Review',
+                    author: 'Verified Student',
+                    visibility: 'Public',
+                    response: null,
+                    responseDate: null,
+                    createdAt: 'Just now',
+                    isMine: true
+                };
+
+                setSuggestions([newSuggestion, ...suggestions]);
+                setSelectedSuggestionId(targetId);
+                setStudentTab('suggestion-published');
+                showToast("Suggestion published successfully.");
+            };
+
+            const handleAcknowledge = (id) => {
+                setReports(reports.map(r => r.id === id ? { ...r, status: 'Acknowledged' } : r));
+                showToast("Report acknowledged.");
+            };
+
+            const handleSendDeptReply = (id) => {
+                setReports(reports.map(r => {
+                    if (r.id === id) {
+                        return { 
+                            ...r, 
+                            response: deptReplyText, 
+                            responseDate: 'Just now',
+                            status: r.status === 'Submitted' ? 'Acknowledged' : r.status
+                        };
+                    }
+                    return r;
+                }));
+                showToast("Department response attached successfully.");
+            };
+
+            const handleUpdateStatus = (id, newStatus) => {
+                setReports(reports.map(r => r.id === id ? { ...r, status: newStatus } : r));
+                showToast(`Report status updated to ${newStatus}`);
+            };
+
+            const handleToggleSupport = (id) => {
+                setSuggestions(suggestions.map(s => {
+                    if (s.id === id) {
+                        if (s.isSupportedByMe) {
+                            showToast("You already support this suggestion.");
+                            return s;
+                        }
+                        showToast("Thank you for supporting this suggestion!");
+                        return {
+                            ...s,
+                            isSupportedByMe: true,
+                            supportersCount: s.supportersCount + 1
+                        };
+                    }
+                    return s;
+                }));
+            };
+
+            const handleUpdateSuggestionStatus = (id, newStatus) => {
+                setSuggestions(suggestions.map(s => s.id === id ? { ...s, status: newStatus } : s));
+                showToast(`Suggestion status updated to ${newStatus}`);
+            };
+
+            const handleSendDeptSuggReply = (id) => {
+                setSuggestions(suggestions.map(s => {
+                    if (s.id === id) {
+                        return { 
+                            ...s, 
+                            response: deptSuggReplyText, 
+                            responseDate: 'Just now' 
+                        };
+                    }
+                    return s;
+                }));
+                showToast("Official response published successfully.");
+            };
+
+            const selectedReport = reports.find(r => r.id === selectedReportId) || reports[0];
+            const selectedSuggestion = suggestions.find(s => s.id === selectedSuggestionId) || suggestions[0];
+
+            return (
+                <div className="min-h-screen flex flex-col bg-slate-50 relative">
+                    {feedbackMsg && (
+                        <div className="fixed top-16 right-4 z-50 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl border border-slate-700 animate-fadeIn flex items-center gap-2">
+                            <IconCheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>{feedbackMsg}</span>
+                        </div>
+                    )}
+
+                    <header className="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+                        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">
+                                    <IconBuilding className="w-4 h-4" />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-bold text-sm tracking-tight text-white">Student Voice</span>
+                                        <span className="text-[10px] bg-slate-800 border border-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-mono">
+                                            BMC
+                                        </span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 hidden sm:block">
+                                        Butwal Multiple Campus
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Role Switch Toggle Icon */}
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={() => setCurrentRole(currentRole === 'student' ? 'department' : 'student')}
+                                    title={currentRole === 'student' ? 'Switch to Department View' : 'Switch to Student View'}
+                                    className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer flex items-center justify-center border border-slate-700/60"
+                                    aria-label="Switch view"
+                                >
+                                    <IconSwitch className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Navigation Sub-bar */}
+                        <div className="bg-slate-800/90 border-t border-slate-700/80 px-4">
+                            <div className="max-w-5xl mx-auto flex items-center justify-between">
+                                {currentRole === 'student' ? (
+                                    <nav className="flex space-x-1 py-1.5 text-xs">
+                                        <button 
+                                            onClick={() => setStudentTab('dashboard')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                studentTab === 'dashboard' ? 'bg-slate-900 text-white font-semibold shadow-sm' : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            Dashboard
+                                        </button>
+                                        <button 
+                                            onClick={() => setStudentTab('report')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                studentTab === 'report' ? 'bg-slate-900 text-white font-semibold shadow-sm' : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            Share a Concern
+                                        </button>
+                                        <button 
+                                            onClick={() => setStudentTab('suggestions')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                studentTab === 'suggestions' || studentTab === 'create-suggestion' || studentTab === 'suggestion-published' || studentTab === 'suggestion-detail'
+                                                    ? 'bg-slate-900 text-white font-semibold shadow-sm' 
+                                                    : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            Public Suggestions
+                                        </button>
+                                        <button 
+                                            onClick={() => setStudentTab('my-reports')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                studentTab === 'my-reports' || studentTab === 'report-submitted' || studentTab === 'report-detail'
+                                                    ? 'bg-slate-900 text-white font-semibold shadow-sm' 
+                                                    : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            My Submissions
+                                        </button>
+                                    </nav>
+                                ) : (
+                                    <nav className="flex space-x-1 py-1.5 text-xs">
+                                        <button 
+                                            onClick={() => setDeptTab('dashboard')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                deptTab === 'dashboard' || deptTab === 'reports' || deptTab === 'report-detail' ? 'bg-slate-900 text-white font-semibold shadow-sm' : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            Incoming Reports
+                                        </button>
+                                        <button 
+                                            onClick={() => setDeptTab('suggestions')}
+                                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                                                deptTab === 'suggestions' || deptTab === 'suggestion-detail' ? 'bg-slate-900 text-white font-semibold shadow-sm' : 'text-slate-300 hover:text-white'
+                                            }`}
+                                        >
+                                            Public Suggestions
+                                        </button>
+                                    </nav>
+                                )}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6">
+                        {currentRole === 'student' ? (
+                            <StudentView 
+                                studentTab={studentTab}
+                                setStudentTab={setStudentTab}
+                                reports={reports}
+                                suggestions={suggestions}
+                                selectedReport={selectedReport}
+                                setSelectedReportId={setSelectedReportId}
+                                selectedSuggestion={selectedSuggestion}
+                                setSelectedSuggestionId={setSelectedSuggestionId}
+                                reportForm={reportForm}
+                                setReportForm={setReportForm}
+                                suggestionForm={suggestionForm}
+                                setSuggestionForm={setSuggestionForm}
+                                handleSubmitReport={handleSubmitReport}
+                                handlePublishSuggestion={handlePublishSuggestion}
+                                handleToggleSupport={handleToggleSupport}
+                            />
+                        ) : (
+                            <DepartmentView 
+                                deptTab={deptTab}
+                                setDeptTab={setDeptTab}
+                                reports={reports}
+                                suggestions={suggestions}
+                                selectedReport={selectedReport}
+                                setSelectedReportId={setSelectedReportId}
+                                selectedSuggestion={selectedSuggestion}
+                                setSelectedSuggestionId={setSelectedSuggestionId}
+                                handleAcknowledge={handleAcknowledge}
+                                deptReplyText={deptReplyText}
+                                setDeptReplyText={setDeptReplyText}
+                                handleSendDeptReply={handleSendDeptReply}
+                                handleUpdateStatus={handleUpdateStatus}
+                                deptSuggReplyText={deptSuggReplyText}
+                                setDeptSuggReplyText={setDeptSuggReplyText}
+                                handleSendDeptSuggReply={handleSendDeptSuggReply}
+                                handleUpdateSuggestionStatus={handleUpdateSuggestionStatus}
+                            />
+                        )}
+                    </main>
+
+                    <footer className="bg-white border-t border-slate-200 py-3 text-slate-500 text-xs mt-auto">
+                        <div className="max-w-5xl mx-auto px-4 flex justify-between items-center text-[11px]">
+                            <span>Student Voice • Butwal Multiple Campus</span>
+                            <div className="flex items-center gap-3">
+                                <span className="text-slate-400 font-medium">Academic Portal</span>
+                                <button 
+                                    onClick={handleResetDemo}
+                                    title="Reset Demo Data"
+                                    aria-label="Reset Demo Data"
+                                    className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer border border-slate-200"
+                                >
+                                    <IconReset className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        function StudentView({
+            studentTab,
+            setStudentTab,
+            reports,
+            suggestions,
+            selectedReport,
+            setSelectedReportId,
+            selectedSuggestion,
+            setSelectedSuggestionId,
+            reportForm,
+            setReportForm,
+            suggestionForm,
+            setSuggestionForm,
+            handleSubmitReport,
+            handlePublishSuggestion,
+            handleToggleSupport
+        }) {
+            if (studentTab === 'dashboard') {
+                const mySubmissions = [
+                    ...reports.filter(r => r.isMine).map(r => ({ ...r, type: 'report' })),
+                    ...suggestions.filter(s => s.isMine).map(s => ({ ...s, type: 'suggestion' }))
+                ];
+
+                return (
+                    <div className="space-y-5 animate-fadeIn">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+                                    Student Voice Portal
+                                </h1>
+                                <p className="text-xs text-slate-500 mt-0.5">
+                                    Raise a concern privately or put an idea forward for your campus community.
+                                </p>
+                            </div>
+                            <div className="shrink-0 flex items-center gap-2.5 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl">
+                                <IconShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                                <div className="text-[11px]">
+                                    <div className="font-bold text-slate-800">Shyam Chaudhary</div>
+                                    <div className="text-slate-500 text-[10px]">CSIT • Verified Student</div>
+                                    <div className="text-slate-400 text-[10px]">shyam.chaudhary@bmc.edu.np</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div 
+                                onClick={() => setStudentTab('report')}
+                                className="bg-white border border-slate-200 hover:border-blue-500 rounded-2xl p-5 shadow-sm transition-all cursor-pointer group flex flex-col justify-between"
+                            >
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-700">
+                                            Share a Concern
+                                        </h3>
+                                        <IconArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                    <p className="text-xs text-slate-600 leading-relaxed">
+                                        Send a personal or campus-related concern directly to the relevant department. Choose whether to share your identity.
+                                    </p>
+                                </div>
+                                <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] font-semibold text-blue-700">
+                                    Anonymous or With Identity →
+                                </div>
+                            </div>
+
+                            <div 
+                                onClick={() => setStudentTab('suggestions')}
+                                className="bg-white border border-slate-200 hover:border-blue-500 rounded-2xl p-5 shadow-sm transition-all cursor-pointer group flex flex-col justify-between"
+                            >
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-700">
+                                            Public Suggestions
+                                        </h3>
+                                        <IconArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                    <p className="text-xs text-slate-600 leading-relaxed">
+                                        Share an idea with the student community and let others support it.
+                                    </p>
+                                </div>
+                                <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] font-semibold text-blue-700">
+                                    View Suggestions →
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-bold text-slate-900 text-xs uppercase tracking-wider">My Recent Submissions</h3>
+                                {mySubmissions.length > 0 && (
+                                    <button onClick={() => setStudentTab('my-reports')} className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                                        View All ({mySubmissions.length}) →
+                                    </button>
+                                )}
+                            </div>
+
+                            {mySubmissions.length > 0 ? (
+                                <div className="space-y-2">
+                                    {mySubmissions.slice(0, 2).map((item) => (
+                                        <div 
+                                            key={`${item.type}-${item.id}`}
+                                            onClick={() => {
+                                                if (item.type === 'report') {
+                                                    setSelectedReportId(item.id);
+                                                    setStudentTab('report-detail');
+                                                } else {
+                                                    setSelectedSuggestionId(item.id);
+                                                    setStudentTab('suggestion-detail');
+                                                }
+                                            }}
+                                            className="bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl p-3.5 cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                                        >
+                                            <div className="space-y-0.5">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                                        item.type === 'report' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                                    }`}>
+                                                        {item.type === 'report' ? 'Private Concern' : 'Public Suggestion'}
+                                                    </span>
+                                                    <span className="font-mono font-bold text-slate-500">#{item.id}</span>
+                                                    <span className="font-bold text-slate-900">{item.title}</span>
+                                                </div>
+                                                <p className="text-slate-500 text-[11px] line-clamp-1">
+                                                    {item.description}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <StatusBadge status={item.status} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-xs text-slate-500 bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 text-center">
+                                    No submissions yet. Submit a concern or public suggestion to see it here.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'report') {
+                return (
+                    <div className="max-w-xl mx-auto space-y-4 animate-fadeIn">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                            <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-base font-bold text-slate-900">Share a Concern</h2>
+                                    <p className="text-xs text-slate-500">Direct, confidential concern form sent to the department.</p>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmitReport} className="space-y-3.5 text-xs">
+                                <div>
+                                    <label className="block font-semibold text-slate-700 mb-1">Concern Title</label>
+                                    <input 
+                                        type="text" 
+                                        value={reportForm.title}
+                                        onChange={e => setReportForm({...reportForm, title: e.target.value})}
+                                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block font-semibold text-slate-700 mb-1">Category</label>
+                                        <select 
+                                            value={reportForm.category}
+                                            onChange={e => setReportForm({...reportForm, category: e.target.value})}
+                                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        >
+                                            <option value="Academic / Teaching">Academic / Teaching</option>
+                                            <option value="Classroom Environment">Classroom Environment</option>
+                                            <option value="Facilities">Facilities</option>
+                                            <option value="Internet / IT">Internet / IT</option>
+                                            <option value="Laboratory">Laboratory</option>
+                                            <option value="Library">Library</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block font-semibold text-slate-700 mb-1">Location</label>
+                                        <input 
+                                            type="text" 
+                                            value={reportForm.location}
+                                            onChange={e => setReportForm({...reportForm, location: e.target.value})}
+                                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block font-semibold text-slate-700 mb-1">Description</label>
+                                    <textarea 
+                                        rows="3"
+                                        value={reportForm.description}
+                                        onChange={e => setReportForm({...reportForm, description: e.target.value})}
+                                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800 leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div className="space-y-2 pt-2 border-t border-slate-100">
+                                    <label className="block font-semibold text-slate-800">How would you like to send this?</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div 
+                                            onClick={() => setReportForm({...reportForm, visibility: 'Anonymous'})}
+                                            className={`p-3 rounded-xl border cursor-pointer flex items-center gap-2.5 ${
+                                                reportForm.visibility === 'Anonymous'
+                                                    ? 'bg-blue-50 border-blue-600 ring-1 ring-blue-600'
+                                                    : 'bg-slate-50 border-slate-200'
+                                            }`}
+                                        >
+                                            <IconLock className="w-4 h-4 text-blue-700 shrink-0" />
+                                            <div>
+                                                <div className="font-bold text-slate-900">Anonymous</div>
+                                                <div className="text-[10px] text-slate-500">Identity protected</div>
+                                            </div>
+                                        </div>
+
+                                        <div 
+                                            onClick={() => setReportForm({...reportForm, visibility: 'Identified'})}
+                                            className={`p-3 rounded-xl border cursor-pointer flex items-center gap-2.5 ${
+                                                reportForm.visibility === 'Identified'
+                                                    ? 'bg-blue-50 border-blue-600 ring-1 ring-blue-600'
+                                                    : 'bg-slate-50 border-slate-200'
+                                            }`}
+                                        >
+                                            <IconUser className="w-4 h-4 text-slate-700 shrink-0" />
+                                            <div>
+                                                <div className="font-bold text-slate-900">With my identity</div>
+                                                <div className="text-[10px] text-slate-500">Name visible</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
+                                >
+                                    <span>Submit Concern</span>
+                                    <IconSend className="w-3.5 h-3.5" />
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'report-submitted') {
+                return (
+                    <div className="max-w-md mx-auto space-y-4 animate-fadeIn text-center py-4">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                            <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                                <IconCheckCircle className="w-5 h-5" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900">Concern Submitted</h2>
+                                <p className="text-xs text-slate-500 mt-0.5">Sent directly to the CSIT department.</p>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-left space-y-2 text-xs">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">Report Reference:</span>
+                                    <span className="font-mono font-bold text-blue-700">#{selectedReport.id}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">Identity Choice:</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.visibility === 'Anonymous' ? 'Anonymous' : 'With my identity'}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">Status:</span>
+                                    <StatusBadge status={selectedReport.status} />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2 pt-1">
+                                <button 
+                                    onClick={() => setStudentTab('report-detail')}
+                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 rounded-xl shadow cursor-pointer"
+                                >
+                                    Track Progress
+                                </button>
+                                <button 
+                                    onClick={() => setStudentTab('my-reports')}
+                                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-2 rounded-xl cursor-pointer"
+                                >
+                                    My Submissions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'my-reports') {
+                const myReports = reports.filter(r => r.isMine);
+                const mySuggestions = suggestions.filter(s => s.isMine);
+                const hasSubmissions = myReports.length > 0 || mySuggestions.length > 0;
+
+                return (
+                    <div className="space-y-4 animate-fadeIn">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900">My Submissions</h2>
+                                <p className="text-xs text-slate-500">Track your private concerns and public suggestions in one place.</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={() => setStudentTab('report')}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                >
+                                    <IconPlus className="w-3.5 h-3.5" />
+                                    <span>Share Concern</span>
+                                </button>
+                                <button 
+                                    onClick={() => setStudentTab('create-suggestion')}
+                                    className="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                >
+                                    <IconPlus className="w-3.5 h-3.5" />
+                                    <span>Propose Idea</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {hasSubmissions ? (
+                            <div className="space-y-3">
+                                {/* Private Concerns Section */}
+                                {myReports.map(r => (
+                                    <div 
+                                        key={`rep-${r.id}`}
+                                        onClick={() => {
+                                            setSelectedReportId(r.id);
+                                            setStudentTab('report-detail');
+                                        }}
+                                        className="bg-white border border-slate-200 hover:border-blue-300 rounded-2xl p-4 shadow-sm cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                                    >
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md border border-purple-200">
+                                                    Private Concern
+                                                </span>
+                                                <span className="font-mono text-xs font-bold text-slate-400">#{r.id}</span>
+                                            </div>
+                                            <h3 className="font-bold text-slate-900 text-sm">{r.title}</h3>
+                                            <div className="text-slate-500 text-xs flex items-center gap-2">
+                                                <span className="font-medium text-slate-700">
+                                                    {r.visibility === 'Anonymous' ? 'Private concern • Anonymous' : 'Private concern • Identified'}
+                                                </span>
+                                                <span>•</span>
+                                                <span>{r.createdAt}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2.5 shrink-0">
+                                            <StatusBadge status={r.status} />
+                                            <span className="text-blue-600 font-bold text-xs">View →</span>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Public Suggestions Section */}
+                                {mySuggestions.map(s => (
+                                    <div 
+                                        key={`sug-${s.id}`}
+                                        onClick={() => {
+                                            setSelectedSuggestionId(s.id);
+                                            setStudentTab('suggestion-detail');
+                                        }}
+                                        className="bg-white border border-slate-200 hover:border-blue-300 rounded-2xl p-4 shadow-sm cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                                    >
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md border border-blue-200">
+                                                    Public Suggestion
+                                                </span>
+                                                <span className="font-mono text-xs font-bold text-slate-400">#{s.id}</span>
+                                            </div>
+                                            <h3 className="font-bold text-slate-900 text-sm">{s.title}</h3>
+                                            <div className="text-slate-500 text-xs flex items-center gap-2">
+                                                <span className="font-medium text-slate-700">
+                                                    Public suggestion • {s.supportersCount} {s.supportersCount === 1 ? 'supporter' : 'supporters'}
+                                                </span>
+                                                <span>•</span>
+                                                <span>{s.createdAt}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2.5 shrink-0">
+                                            <StatusBadge status={s.status} />
+                                            <span className="text-blue-600 font-bold text-xs">View →</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-3 shadow-sm">
+                                <p className="text-xs text-slate-500">You haven't submitted any concerns or suggestions in this session yet.</p>
+                                <div className="flex justify-center gap-2">
+                                    <button 
+                                        onClick={() => setStudentTab('report')}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-xl cursor-pointer"
+                                    >
+                                        Share a Concern
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            if (studentTab === 'report-detail') {
+                return (
+                    <div className="max-w-xl mx-auto space-y-4 animate-fadeIn text-xs">
+                        <button 
+                            onClick={() => setStudentTab('my-reports')}
+                            className="font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Back to My Submissions
+                        </button>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+                            <div className="flex items-start justify-between border-b border-slate-200 pb-3 gap-3">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="font-mono font-bold text-blue-700">#{selectedReport.id}</span>
+                                        <span className="text-slate-400">• {selectedReport.createdAt}</span>
+                                    </div>
+                                    <h2 className="text-base font-bold text-slate-900">{selectedReport.title}</h2>
+                                </div>
+                                <StatusBadge status={selectedReport.status} />
+                            </div>
+
+                            {/* Timeline component */}
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <span className="block font-bold text-slate-500 uppercase text-[10px] mb-2">Submission Timeline</span>
+                                <Timeline currentStatus={selectedReport.status} />
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Category</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.category}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Location</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.location}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Identity Mode</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.visibility === 'Anonymous' ? 'Anonymous' : 'With identity'}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="font-bold text-slate-500 uppercase text-[10px]">Concern Details</span>
+                                <p className="text-slate-800 bg-slate-50 p-3.5 rounded-xl border border-slate-200 leading-relaxed">
+                                    "{selectedReport.description}"
+                                </p>
+                            </div>
+
+                            {/* Department Response Display */}
+                            <div className="space-y-1 pt-1">
+                                {selectedReport.response ? (
+                                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+                                        <div className="flex items-center justify-between text-blue-900 font-bold">
+                                            <span className="flex items-center gap-1.5 text-xs">
+                                                <IconBuilding className="w-3.5 h-3.5 text-blue-700" />
+                                                Department Response
+                                            </span>
+                                            <span className="text-[10px] text-blue-700">{selectedReport.responseDate || 'Recently'}</span>
+                                        </div>
+                                        <p className="text-blue-950 text-xs leading-relaxed bg-white p-3 rounded-lg border border-blue-100 font-medium">
+                                            "{selectedReport.response}"
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1">
+                                        <div className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                                            <IconBuilding className="w-3.5 h-3.5 text-slate-500" />
+                                            No response yet
+                                        </div>
+                                        <p className="text-slate-500 text-xs">
+                                            The department has received your concern and has not responded yet.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'create-suggestion') {
+                return (
+                    <div className="max-w-xl mx-auto space-y-4 animate-fadeIn">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                            <div className="border-b border-slate-200 pb-3">
+                                <h2 className="text-base font-bold text-slate-900">Propose Suggestion</h2>
+                                <p className="text-xs text-slate-500">Share an idea with the student community and let others support it.</p>
+                            </div>
+
+                            <form onSubmit={handlePublishSuggestion} className="space-y-3.5 text-xs">
+                                <div>
+                                    <label className="block font-semibold text-slate-700 mb-1">Suggestion Title</label>
+                                    <input 
+                                        type="text" 
+                                        value={suggestionForm.title}
+                                        onChange={e => setSuggestionForm({...suggestionForm, title: e.target.value})}
+                                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block font-semibold text-slate-700 mb-1">Description</label>
+                                    <textarea 
+                                        rows="3"
+                                        value={suggestionForm.description}
+                                        onChange={e => setSuggestionForm({...suggestionForm, description: e.target.value})}
+                                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800 leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div className="pt-2 flex gap-2 justify-end">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setStudentTab('suggestions')}
+                                        className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow flex items-center gap-1.5 cursor-pointer"
+                                    >
+                                        <span>Publish Suggestion</span>
+                                        <IconSend className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'suggestion-published') {
+                return (
+                    <div className="max-w-md mx-auto space-y-4 animate-fadeIn text-center py-4">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                            <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                                <IconCheckCircle className="w-5 h-5" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900">Suggestion Published</h2>
+                                <p className="text-xs font-semibold text-slate-700 mt-1">"{selectedSuggestion.title}"</p>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-left space-y-2 text-xs">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">Status:</span>
+                                    <StatusBadge status={selectedSuggestion.status} />
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">Supporters:</span>
+                                    <span className="font-bold text-slate-800">{selectedSuggestion.supportersCount} {selectedSuggestion.supportersCount === 1 ? 'supporter' : 'supporters'}</span>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => setStudentTab('suggestion-detail')}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-xl shadow cursor-pointer"
+                            >
+                                View Suggestion & Support
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'suggestions') {
+                return (
+                    <div className="space-y-4 animate-fadeIn max-w-2xl mx-auto">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900">Public Suggestions</h2>
+                                <p className="text-xs text-slate-500">Students can post ideas that could benefit the wider campus community.</p>
+                            </div>
+                            <button 
+                                onClick={() => setStudentTab('create-suggestion')}
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
+                            >
+                                <IconPlus className="w-3.5 h-3.5" />
+                                <span>Propose Suggestion</span>
+                            </button>
+                        </div>
+
+                        <div className="space-y-3">
+                            {suggestions.map(s => (
+                                <div 
+                                    key={s.id} 
+                                    onClick={() => {
+                                        setSelectedSuggestionId(s.id);
+                                        setStudentTab('suggestion-detail');
+                                    }}
+                                    className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 shadow-sm space-y-3 text-xs cursor-pointer transition-all"
+                                >
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <span className="font-mono text-[11px] font-bold text-blue-700">#{s.id}</span>
+                                                <span className="text-slate-400 text-[11px]">• {s.createdAt}</span>
+                                            </div>
+                                            <h3 className="font-bold text-slate-900 text-sm">{s.title}</h3>
+                                        </div>
+                                        <StatusBadge status={s.status} />
+                                    </div>
+
+                                    <p className="text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        "{s.description}"
+                                    </p>
+
+                                    {s.response && (
+                                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-2.5 text-blue-950 space-y-0.5">
+                                            <div className="font-bold text-[10px] uppercase text-blue-700">
+                                                Department Response
+                                            </div>
+                                            <p className="text-xs font-medium leading-relaxed">"{s.response}"</p>
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                                        <div className="text-slate-700 font-bold text-xs">
+                                            {s.supportersCount} {s.supportersCount === 1 ? 'supporter' : 'supporters'}
+                                        </div>
+
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleToggleSupport(s.id);
+                                            }}
+                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                                s.isSupportedByMe 
+                                                    ? 'bg-emerald-600 text-white' 
+                                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
+                                            }`}
+                                        >
+                                            {s.isSupportedByMe ? '✓ Supported' : 'Support'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (studentTab === 'suggestion-detail') {
+                return (
+                    <div className="max-w-xl mx-auto space-y-4 animate-fadeIn text-xs">
+                        <button 
+                            onClick={() => setStudentTab('suggestions')}
+                            className="font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Back to Suggestions
+                        </button>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+                            <div className="flex items-start justify-between border-b border-slate-200 pb-3 gap-3">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="font-mono font-bold text-blue-700">#{selectedSuggestion.id}</span>
+                                        <span className="text-slate-400">• {selectedSuggestion.createdAt}</span>
+                                    </div>
+                                    <h2 className="text-base font-bold text-slate-900">{selectedSuggestion.title}</h2>
+                                </div>
+                                <StatusBadge status={selectedSuggestion.status} />
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="font-bold text-slate-500 uppercase text-[10px]">Proposal Details</span>
+                                <p className="text-slate-800 bg-slate-50 p-3.5 rounded-xl border border-slate-200 leading-relaxed">
+                                    "{selectedSuggestion.description}"
+                                </p>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
+                                <div>
+                                    <div className="text-xs font-bold text-slate-900">
+                                        {selectedSuggestion.supportersCount} {selectedSuggestion.supportersCount === 1 ? 'supporter' : 'supporters'}
+                                    </div>
+                                    <div className="text-[11px] text-slate-500">
+                                        {selectedSuggestion.isSupportedByMe ? "You support this suggestion" : "Become a supporter"}
+                                    </div>
+                                </div>
+
+                                <button 
+                                    onClick={() => handleToggleSupport(selectedSuggestion.id)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                                        selectedSuggestion.isSupportedByMe 
+                                            ? 'bg-emerald-600 text-white' 
+                                            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
+                                    }`}
+                                >
+                                    {selectedSuggestion.isSupportedByMe ? '✓ Supported' : 'Support'}
+                                </button>
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="font-bold text-slate-500 uppercase text-[10px]">Department Response</span>
+                                {selectedSuggestion.response ? (
+                                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-3.5 space-y-1">
+                                        <div className="flex items-center justify-between text-blue-900 font-bold">
+                                            <span>CSIT Department Desk</span>
+                                            <span className="text-[10px] text-blue-700">{selectedSuggestion.responseDate}</span>
+                                        </div>
+                                        <p className="text-blue-950 leading-relaxed bg-white p-2.5 rounded-lg border border-blue-100 font-medium">
+                                            "{selectedSuggestion.response}"
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 italic text-center">
+                                        Awaiting official response...
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        function DepartmentView({
+            deptTab,
+            setDeptTab,
+            reports,
+            suggestions,
+            selectedReport,
+            setSelectedReportId,
+            selectedSuggestion,
+            setSelectedSuggestionId,
+            handleAcknowledge,
+            deptReplyText,
+            setDeptReplyText,
+            handleSendDeptReply,
+            handleUpdateStatus,
+            deptSuggReplyText,
+            setDeptSuggReplyText,
+            handleSendDeptSuggReply,
+            handleUpdateSuggestionStatus
+        }) {
+            if (deptTab === 'dashboard' || deptTab === 'reports') {
+                return (
+                    <div className="space-y-4 animate-fadeIn text-xs">
+                        <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                            <div>
+                                <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Butwal Multiple Campus</span>
+                                <h1 className="text-base font-bold">CSIT Department Management Desk</h1>
+                            </div>
+                            <span className="text-[11px] text-slate-300 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded font-mono">
+                                Admin Dashboard
+                            </span>
+                        </div>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                            <div className="p-3.5 border-b border-slate-200 font-bold text-slate-900 flex justify-between items-center">
+                                <span>Incoming Reports</span>
+                                <span className="text-slate-500 font-normal">{reports.length} Total</span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[11px] uppercase">
+                                            <th className="p-3">Ref ID</th>
+                                            <th className="p-3">Concern / Title</th>
+                                            <th className="p-3">Category</th>
+                                            <th className="p-3">Identity Mode</th>
+                                            <th className="p-3">Status</th>
+                                            <th className="p-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {reports.map(r => (
+                                            <tr 
+                                                key={r.id}
+                                                onClick={() => {
+                                                    setSelectedReportId(r.id);
+                                                    setDeptTab('report-detail');
+                                                }}
+                                                className="hover:bg-slate-50 cursor-pointer transition-colors"
+                                            >
+                                                <td className="p-3 font-mono font-bold text-blue-700">#{r.id}</td>
+                                                <td className="p-3 font-bold text-slate-900">{r.title}</td>
+                                                <td className="p-3 text-slate-600">{r.category}</td>
+                                                <td className="p-3">
+                                                    {r.visibility === 'Anonymous' || r.visibility === 'Private' ? (
+                                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                                            <IconLock className="w-3 h-3 text-blue-600" />
+                                                            Anonymous
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                                            {r.reporterName}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="p-3">
+                                                    <StatusBadge status={r.status} />
+                                                </td>
+                                                <td className="p-3 text-right text-blue-600 font-semibold">
+                                                    Open →
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (deptTab === 'report-detail') {
+                return (
+                    <div className="max-w-2xl mx-auto space-y-4 animate-fadeIn text-xs">
+                        <button 
+                            onClick={() => setDeptTab('dashboard')}
+                            className="font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Back to Incoming Reports
+                        </button>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+                            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="font-mono font-bold text-blue-700">#{selectedReport.id}</span>
+                                        <span className="text-slate-400">• {selectedReport.createdAt}</span>
+                                    </div>
+                                    <h2 className="text-base font-bold text-slate-900">{selectedReport.title}</h2>
+                                </div>
+                                <StatusBadge status={selectedReport.status} />
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Category</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.category}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Location</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.location}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Faculty</span>
+                                    <span className="font-semibold text-slate-800">{selectedReport.faculty}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="font-bold text-slate-500 uppercase text-[10px]">Report Content</span>
+                                <p className="text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed">
+                                    "{selectedReport.description}"
+                                </p>
+                            </div>
+
+                            <div className="p-3 bg-slate-900 text-white rounded-xl flex items-center justify-between">
+                                {selectedReport.visibility === 'Anonymous' || selectedReport.visibility === 'Private' ? (
+                                    <div className="flex items-center gap-2">
+                                        <IconShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                                        <span className="font-semibold text-slate-200">Submitted Anonymously • Identity Protected</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <IconUser className="w-4 h-4 text-blue-400 shrink-0" />
+                                        <span className="font-semibold text-slate-200">{selectedReport.reporterName} ({selectedReport.reporterEmail})</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="border-t border-slate-200 pt-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="font-bold text-slate-900 uppercase text-[11px]">Department Action</h4>
+                                    <button 
+                                        onClick={() => handleAcknowledge(selectedReport.id)}
+                                        className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-2.5 py-1 rounded-lg cursor-pointer"
+                                    >
+                                        Acknowledge Report
+                                    </button>
+                                </div>
+
+                                <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <span className="font-semibold text-slate-700">Update Status:</span>
+                                    <select 
+                                        value={selectedReport.status}
+                                        onChange={e => handleUpdateStatus(selectedReport.id, e.target.value)}
+                                        className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                                    >
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="Acknowledged">Acknowledged</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Resolved">Resolved</option>
+                                    </select>
+                                </div>
+
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="block font-bold text-slate-800">Add / Update Department Response</label>
+                                    </div>
+
+                                    <textarea 
+                                        rows="3"
+                                        value={deptReplyText}
+                                        onChange={e => setDeptReplyText(e.target.value)}
+                                        className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-800 leading-relaxed focus:outline-none"
+                                        placeholder="Type department response..."
+                                    ></textarea>
+
+                                    <div className="flex justify-end">
+                                        <button 
+                                            onClick={() => {
+                                                handleSendDeptReply(selectedReport.id);
+                                            }}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 shadow cursor-pointer"
+                                        >
+                                            <IconCheckCircle className="w-3.5 h-3.5" />
+                                            <span>Submit Response</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (deptTab === 'suggestions') {
+                return (
+                    <div className="space-y-4 animate-fadeIn max-w-2xl mx-auto text-xs">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900">Public Suggestions</h2>
+                                <p className="text-slate-500">Review student proposals and post official responses.</p>
+                            </div>
+                            <span className="font-semibold text-slate-700 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full">
+                                {suggestions.length} Suggestions
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {suggestions.map(s => (
+                                <div 
+                                    key={s.id} 
+                                    onClick={() => {
+                                        setSelectedSuggestionId(s.id);
+                                        setDeptTab('suggestion-detail');
+                                    }}
+                                    className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 shadow-sm space-y-2.5 cursor-pointer transition-all"
+                                >
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <span className="font-mono font-bold text-blue-700">#{s.id}</span>
+                                                <span className="text-slate-400">• {s.createdAt}</span>
+                                            </div>
+                                            <h3 className="font-bold text-slate-900 text-sm">{s.title}</h3>
+                                            <div className="text-slate-600 text-[11px] font-semibold mt-0.5">
+                                                {s.supportersCount} {s.supportersCount === 1 ? 'supporter' : 'supporters'}
+                                            </div>
+                                        </div>
+                                        <StatusBadge status={s.status} />
+                                    </div>
+
+                                    <p className="text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed line-clamp-2">
+                                        "{s.description}"
+                                    </p>
+
+                                    {s.response ? (
+                                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-2.5 text-blue-900 space-y-0.5">
+                                            <div className="font-bold text-[10px] uppercase text-blue-700">
+                                                Published Response
+                                            </div>
+                                            <p className="text-blue-950 font-medium">"{s.response}"</p>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-between text-slate-500 bg-slate-50 border border-slate-200 p-2 rounded-xl">
+                                            <span>Awaiting response</span>
+                                            <span className="text-blue-700 font-semibold">Respond →</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (deptTab === 'suggestion-detail') {
+                return (
+                    <div className="max-w-xl mx-auto space-y-4 animate-fadeIn text-xs">
+                        <button 
+                            onClick={() => setDeptTab('suggestions')}
+                            className="font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Back to Public Suggestions
+                        </button>
+
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+                            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="font-mono font-bold text-blue-700">#{selectedSuggestion.id}</span>
+                                        <span className="text-slate-400">• {selectedSuggestion.createdAt}</span>
+                                    </div>
+                                    <h2 className="text-base font-bold text-slate-900">{selectedSuggestion.title}</h2>
+                                </div>
+                                <StatusBadge status={selectedSuggestion.status} />
+                            </div>
+
+                            <div className="p-3 bg-slate-900 text-white rounded-xl flex items-center justify-between">
+                                <span className="font-semibold">Verified Student Suggestion</span>
+                                <span className="font-bold text-blue-300">{selectedSuggestion.supportersCount} Supporters</span>
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="font-bold text-slate-500 uppercase text-[10px]">Suggestion Content</span>
+                                <p className="text-slate-800 bg-slate-50 p-3.5 rounded-xl border border-slate-200 leading-relaxed">
+                                    "{selectedSuggestion.description}"
+                                </p>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between">
+                                <label className="block font-bold text-slate-800">Update Status</label>
+                                <select 
+                                    value={selectedSuggestion.status}
+                                    onChange={e => handleUpdateSuggestionStatus(selectedSuggestion.id, e.target.value)}
+                                    className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                                >
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Planned">Planned</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Implemented">Implemented</option>
+                                </select>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <label className="block font-bold text-slate-800">Official Response</label>
+                                </div>
+                                
+                                <textarea 
+                                    rows="3"
+                                    value={deptSuggReplyText}
+                                    onChange={e => setDeptSuggReplyText(e.target.value)}
+                                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-800 leading-relaxed focus:outline-none"
+                                    placeholder="Type official response..."
+                                ></textarea>
+
+                                <div className="flex justify-end">
+                                    <button 
+                                        onClick={() => {
+                                            handleSendDeptSuggReply(selectedSuggestion.id);
+                                            handleUpdateSuggestionStatus(selectedSuggestion.id, 'Planned');
+                                        }}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 shadow cursor-pointer"
+                                    >
+                                        <IconSend className="w-3.5 h-3.5" />
+                                        <span>Publish Response</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        function Timeline({ currentStatus }) {
+            const stages = [
+                { key: 'Submitted', label: 'Submitted' },
+                { key: 'Acknowledged', label: 'Acknowledged' },
+                { key: 'In Progress', label: 'In Progress' },
+                { key: 'Resolved', label: 'Resolved' }
+            ];
+
+            const getStageIndex = (s) => {
+                if (s === 'Submitted') return 0;
+                if (s === 'Acknowledged') return 1;
+                if (s === 'In Progress') return 2;
+                if (s === 'Resolved') return 3;
+                return 0;
+            };
+
+            const currentIndex = getStageIndex(currentStatus);
+
+            return (
+                <div className="py-1 px-1">
+                    <div className="relative flex items-center justify-between">
+                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-slate-200 w-full z-0"></div>
+                        <div 
+                            className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-blue-600 z-0 transition-all duration-300"
+                            style={{ width: `${(currentIndex / (stages.length - 1)) * 100}%` }}
+                        ></div>
+
+                        {stages.map((stage, idx) => {
+                            const isPassed = idx <= currentIndex;
+                            const isCurrent = idx === currentIndex;
+                            return (
+                                <div key={stage.key} className="relative z-10 flex flex-col items-center">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm ${
+                                        isCurrent 
+                                            ? 'bg-blue-600 text-white ring-4 ring-blue-100 scale-110' 
+                                            : isPassed 
+                                                ? 'bg-emerald-600 text-white' 
+                                                : 'bg-white border-2 border-slate-300 text-slate-400'
+                                    }`}>
+                                        {isPassed ? (idx === currentIndex && stage.key !== 'Resolved' ? idx + 1 : '✓') : idx + 1}
+                                    </div>
+                                    <div className="text-center mt-1.5">
+                                        <div className={`text-[10px] font-bold ${isPassed ? 'text-slate-900' : 'text-slate-400'}`}>
+                                            {stage.label}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        }
+
+        function StatusBadge({ status }) {
+            let colorClasses = "bg-slate-100 text-slate-700 border-slate-200";
+
+            if (status === 'Submitted') colorClasses = "bg-blue-50 text-blue-700 border-blue-200";
+            else if (status === 'Acknowledged') colorClasses = "bg-indigo-50 text-indigo-700 border-indigo-200";
+            else if (status === 'In Progress') colorClasses = "bg-amber-50 text-amber-800 border-amber-200";
+            else if (status === 'Resolved' || status === 'Implemented') colorClasses = "bg-emerald-50 text-emerald-800 border-emerald-200";
+            else if (status === 'Planned' || status === 'Under Review') colorClasses = "bg-slate-100 text-slate-800 border-slate-200";
+
+            return (
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${colorClasses}`}>
+                    {status}
+                </span>
+            );
+        }
+
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+    </script>
+</body>
+</html>
